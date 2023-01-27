@@ -205,11 +205,10 @@ function uninstall_plugin($type, $name) {
     }
     $plugininfo = null;
 
-    // perform clean-up task common for all the plugin/subplugin types
+    // Perform clean-up task common for all the plugin/subplugin types.
 
-    //delete the web service functions and pre-built services
-    require_once($CFG->dirroot.'/lib/externallib.php');
-    external_delete_descriptions($component);
+    // Delete the web service functions and pre-built services.
+    \core_external\util::delete_service_descriptions($component);
 
     // delete calendar events
     $DB->delete_records('event', array('modulename' => $pluginname));
@@ -8851,6 +8850,10 @@ function admin_get_root($reload=false, $requirefulltree=true) {
  */
 function admin_apply_default_settings($node=null, $unconditional=true, $admindefaultsettings=array(), $settingsoutput=array()) {
     $counter = 0;
+
+    // This function relies heavily on config cache, so we need to enable in-memory caches if it
+    // is used during install when normal caching is disabled.
+    $token = new \core_cache\allow_temporary_caches();
 
     if (is_null($node)) {
         core_plugin_manager::reset_caches();

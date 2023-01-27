@@ -354,6 +354,10 @@ function grade_needs_regrade_final_grades($courseid) {
 function grade_needs_regrade_progress_bar($courseid) {
     global $DB;
     $grade_items = grade_item::fetch_all(array('courseid' => $courseid));
+    if (!$grade_items) {
+        // If there are no grade items then we definitely don't need a progress bar!
+        return false;
+    }
 
     list($sql, $params) = $DB->get_in_or_equal(array_keys($grade_items), SQL_PARAMS_NAMED, 'gi');
     $gradecount = $DB->count_records_select('grade_grades', 'itemid ' . $sql, $params);
@@ -443,13 +447,20 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
     $return = new stdClass();
     $return->items    = array();
     $return->outcomes = array();
+    $return->errors = [];
 
-    $course_item = grade_item::fetch_course_item($courseid);
+    $courseitem = grade_item::fetch_course_item($courseid);
     $needsupdate = array();
-    if ($course_item->needsupdate) {
+    if ($courseitem->needsupdate) {
         $result = grade_regrade_final_grades($courseid);
         if ($result !== true) {
             $needsupdate = array_keys($result);
+            // Return regrade errors if the user has capability.
+            $context = context_course::instance($courseid);
+            if (has_capability('moodle/grade:edit', $context)) {
+                $return->errors = $result;
+            }
+            $courseitem->regrading_finished();
         }
     }
 
@@ -1309,7 +1320,10 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
                     continue; // this one is ok
                 }
                 $grade_items[$gid]->force_regrading();
-                $errors[$grade_items[$gid]->id] = get_string('errorcalculationbroken', 'grades');
+                if (!empty($grade_items[$gid]->calculation) && empty($errors[$gid])) {
+                    $itemname = $grade_items[$gid]->get_name();
+                    $errors[$gid] = get_string('errorcalculationbroken', 'grades', $itemname);
+                }
             }
             break; // Found error.
         }

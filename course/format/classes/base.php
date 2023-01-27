@@ -26,6 +26,7 @@ namespace core_courseformat;
 
 use navigation_node;
 use moodle_page;
+use cm_info;
 use core_component;
 use course_modinfo;
 use html_writer;
@@ -37,7 +38,7 @@ use coding_exception;
 use moodle_url;
 use lang_string;
 use completion_info;
-use external_api;
+use core_external\external_api;
 use stdClass;
 use cache;
 use core_courseformat\output\legacy_renderer;
@@ -284,6 +285,15 @@ abstract class base {
      */
     public final function get_courseid() {
         return $this->courseid;
+    }
+
+    /**
+     * Returns the course context.
+     *
+     * @return context_course the course context
+     */
+    final public function get_context(): context_course {
+        return context_course::instance($this->courseid);
     }
 
     /**
@@ -608,7 +618,7 @@ abstract class base {
         $course = $this->get_course();
         try {
             $sectionpreferences = (array) json_decode(
-                get_user_preferences('coursesectionspreferences_' . $course->id, null, $USER->id)
+                get_user_preferences("coursesectionspreferences_{$course->id}", '', $USER->id)
             );
             if (empty($sectionpreferences)) {
                 $sectionpreferences = [];
@@ -1462,6 +1472,19 @@ abstract class base {
         }
 
         return true;
+    }
+
+    /**
+     * Wrapper for course_delete_module method.
+     *
+     * Format plugins can override this method to provide their own implementation of course_delete_module.
+     *
+     * @param cm_info $cm the course module information
+     * @param bool $async whether or not to try to delete the module using an adhoc task. Async also depends on a plugin hook.
+     * @throws moodle_exception
+     */
+    public function delete_module(cm_info $cm, bool $async = false) {
+        course_delete_module($cm->id, $async);
     }
 
     /**

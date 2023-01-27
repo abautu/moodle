@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -31,7 +34,7 @@ class mod_quiz_generator extends testing_module_generator {
         require_once($CFG->dirroot.'/mod/quiz/locallib.php');
         $record = (object)(array)$record;
 
-        $defaultquizsettings = array(
+        $defaultquizsettings = [
             'timeopen'               => 0,
             'timeclose'              => 0,
             'preferredbehaviour'     => 'deferredfeedback',
@@ -85,7 +88,7 @@ class mod_quiz_generator extends testing_module_generator {
             'showuserpicture'        => 0,
             'showblocks'             => 0,
             'navmethod'              => QUIZ_NAVMETHOD_FREE,
-        );
+        ];
 
         foreach ($defaultquizsettings as $name => $value) {
             if (!isset($record->{$name})) {
@@ -103,9 +106,6 @@ class mod_quiz_generator extends testing_module_generator {
     /**
      * Create a quiz attempt for a particular user at a particular course.
      *
-     * Currently this method can only create a first attempt for each
-     * user at each quiz. TODO remove this limitation.
-     *
      * @param int $quizid the quiz id (from the mdl_quit table, not cmid).
      * @param int $userid the user id.
      * @param array $forcedrandomquestions slot => questionid. Optional,
@@ -118,14 +118,20 @@ class mod_quiz_generator extends testing_module_generator {
     public function create_attempt($quizid, $userid, array $forcedrandomquestions = [],
             array $forcedvariants = []) {
         // Build quiz object and load questions.
-        $quizobj = quiz::create($quizid, $userid);
+        $quizobj = quiz_settings::create($quizid, $userid);
 
-        if (quiz_get_user_attempts($quizid, $userid, 'all', true)) {
-            throw new coding_exception('mod_quiz_generator is currently limited to only ' .
-                    'be able to create one attempt for each user. (This should be fixed.)');
+        $attemptnumber = 1;
+        $attempt = null;
+
+        if ($attempts = quiz_get_user_attempts($quizid, $userid, 'all', true)) {
+            // There is/are already an attempt/some attempts.
+            // Take the last attempt.
+            $attempt = end($attempts);
+            // Take the attempt number of the last attempt and increase it.
+            $attemptnumber = $attempt->attempt + 1;
         }
 
-        return quiz_prepare_and_start_new_attempt($quizobj, 1, null, false,
+        return quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $attempt, false,
                 $forcedrandomquestions, $forcedvariants);
     }
 

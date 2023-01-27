@@ -48,7 +48,7 @@ define('QUESTION_PREVIEW_MAX_VARIANTS', 100);
 
 // Get and validate question id.
 $id = required_param('id', PARAM_INT);
-$returnurl = optional_param('returnurl', null, PARAM_RAW);
+$returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 
 $question = question_bank::load_question($id);
 
@@ -190,9 +190,9 @@ if (data_submitted() && confirm_sesskey()) {
             question_engine::save_questions_usage_by_activity($quba);
             $transaction->allow_commit();
 
-            $scrollpos = optional_param('scrollpos', '', PARAM_RAW);
-            if ($scrollpos !== '') {
-                $actionurl->param('scrollpos', (int) $scrollpos);
+            $mdlscrollto = optional_param('mdlscrollto', '', PARAM_RAW);
+            if ($mdlscrollto !== '') {
+                $actionurl->param('mdlscrollto', (int) $mdlscrollto);
             }
             redirect($actionurl);
         }

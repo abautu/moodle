@@ -70,6 +70,18 @@ $CFG->dboptions = array(
                                 // can be removed for MySQL (by default it will
                                 // use 'utf8mb4_unicode_ci'. This option should
                                 // be removed for all other databases.
+    // 'versionfromdb' => false,   // On MySQL and MariaDB, this can force
+                                // the DB version to be evaluated using
+                                // the VERSION function instead of the version
+                                // provided by the PHP client which could be
+                                // wrong based on the DB server infrastructure,
+                                // e.g. PaaS on Azure. Default is false/unset.
+                                // Uncomment and set to true to force MySQL and
+                                // MariaDB to use 'SELECT VERSION();'.
+    // 'extrainfo' => [],       // Extra information for the DB driver, e.g. SQL Server,
+                                // has additional configuration according to its environment,
+                                // which the administrator can specify to alter and
+                                // override any connection options.
     // 'fetchbuffersize' => 100000, // On PostgreSQL, this option sets a limit
                                 // on the number of rows that are fetched into
                                 // memory when doing a large recordset query
@@ -668,6 +680,15 @@ $CFG->admin = 'admin';
 //      $CFG->adhoctaskagewarn = 10 * 60;
 //      $CFG->adhoctaskageerror = 4 * 60 * 60;
 //
+// Moodle 4.2+ checks how long tasks have been running for at warns at 12 hours
+// and errors at 24 hours. Set these to override these limits:
+//
+// $CFG->taskruntimewarn = 12 * 60 * 60;
+// $CFG->taskruntimeerror = 24 * 60 * 60;
+//
+// This is not to be confused with $CFG->task_adhoc_max_runtime which is how long the
+// php process should be allowed to run for, not each specific task.
+//
 // Session lock warning threshold. Long running pages should release the session using \core\session\manager::write_close().
 // Set this threshold to any value greater than 0 to add developer warnings when a page locks the session for too long.
 // The session should rarely be locked for more than 1 second. The input should be in seconds and may be a float.
@@ -676,8 +697,7 @@ $CFG->admin = 'admin';
 //
 // There are times when a session lock is not required during a request. For a page/service to opt-in whether or not a
 // session lock is required this setting must first be set to 'true'.
-// This is an experimental issue. The session store can not be in the session, please
-// see https://docs.moodle.org/en/Session_handling#Read_only_sessions.
+// The session store can not be in the session, please see https://docs.moodle.org/en/Session_handling#Read_only_sessions.
 //
 //      $CFG->enable_read_only_sessions = true;
 //

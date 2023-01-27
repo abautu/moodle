@@ -16,22 +16,14 @@
 
 namespace core_grades\external;
 
-use coding_exception;
 use context_course;
-use external_api;
-use external_description;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
-use external_warnings;
-use invalid_parameter_exception;
-use moodle_exception;
-use restricted_context_exception;
-
-defined('MOODLE_INTERNAL') || die;
-
-require_once($CFG->libdir.'/externallib.php');
+use core_external\external_api;
+use core_external\external_description;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
 
 /**
  * External group report API implementation
@@ -110,14 +102,14 @@ class get_groups_for_search_widget extends external_api {
                 ]);
             }
 
-            $mappedgroups = array_map(function($group) use ($COURSE, $actionbaseurl) {
+            $mappedgroups = array_map(function($group) use ($COURSE, $actionbaseurl, $context) {
                 $url = new \moodle_url($actionbaseurl, [
                     'id' => $COURSE->id,
                     'group' => $group->id
                 ]);
                 return (object) [
                     'id' => $group->id,
-                    'name' => $group->name,
+                    'name' => format_string($group->name, true, ['context' => $context]),
                     'url' => $url->out(false),
                     'active' => false // @TODO MDL-76246
                 ];

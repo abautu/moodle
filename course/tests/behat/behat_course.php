@@ -215,8 +215,8 @@ class behat_course extends behat_base {
         // Clicks add activity or resource section link.
         $sectionnode = $this->find('xpath', $sectionxpath);
         $this->execute('behat_general::i_click_on_in_the', [
-            get_string('addresourceoractivity', 'moodle'),
-            'button',
+            "//button[@data-action='open-chooser' and not(@data-beforemod)]",
+            'xpath',
             $sectionnode,
             'NodeElement',
         ]);
@@ -1039,7 +1039,7 @@ class behat_course extends behat_base {
         // JS modal windows and avoiding interacting them at the same time.
         if ($this->running_javascript()) {
             $this->execute('behat_general::i_click_on_in_the',
-                array(get_string('yes'), "button", "Confirm", "dialogue")
+                array(get_string('delete'), "button", "Confirm", "dialogue")
             );
         } else {
             $this->execute("behat_forms::press_button", get_string('yes'));
@@ -1092,8 +1092,14 @@ class behat_course extends behat_base {
                     "/ancestor::li[contains(concat(' ', normalize-space(@class), ' '), ' section ')]" .
                     "/descendant::div[contains(concat(' ', @class, ' '), ' lightbox ')][contains(@style, 'display: none')]";
 
-            $this->execute("behat_general::wait_until_exists",
-                    array($this->escape($hiddenlightboxxpath), "xpath_element")
+            // Component based courses do not use lightboxes anymore but js depending.
+            $sectionreadyxpath = "//*[contains(@id,'page-content')]" .
+                    "/descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' stateready ')]";
+
+            $duplicationreadyxpath = "$hiddenlightboxxpath | $sectionreadyxpath";
+            $this->execute(
+                "behat_general::wait_until_exists",
+                [$this->escape($duplicationreadyxpath), "xpath_element"]
             );
 
             // Close the original activity actions menu.

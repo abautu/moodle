@@ -91,13 +91,18 @@ define('URL_MATCH_EXACT', 2);
  * @return string
  */
 function s($var) {
-
     if ($var === false) {
         return '0';
     }
 
-    return preg_replace('/&amp;#(\d+|x[0-9a-f]+);/i', '&#$1;',
-            htmlspecialchars($var, ENT_QUOTES | ENT_HTML401 | ENT_SUBSTITUTE));
+    if ($var === null || $var === '') {
+        return '';
+    }
+
+    return preg_replace(
+        '/&amp;#(\d+|x[0-9a-f]+);/i', '&#$1;',
+        htmlspecialchars($var, ENT_QUOTES | ENT_HTML401 | ENT_SUBSTITUTE)
+    );
 }
 
 /**
@@ -148,6 +153,9 @@ function addslashes_js($var) {
  * @return string The remaining URL.
  */
 function strip_querystring($url) {
+    if ($url === null || $url === '') {
+        return '';
+    }
 
     if ($commapos = strpos($url, '?')) {
         return substr($url, 0, $commapos);
@@ -336,6 +344,7 @@ class moodle_url {
             $this->anchor = $url->anchor;
 
         } else {
+            $url = $url ?? '';
             // Detect if anchor used.
             $apos = strpos($url, '#');
             if ($apos !== false) {
@@ -872,7 +881,20 @@ class moodle_url {
     }
 
     /**
-     * Returns URL a relative path from $CFG->wwwroot
+     * Checks if URL is relative to $CFG->wwwroot.
+     *
+     * @return bool True if URL is relative to $CFG->wwwroot; otherwise, false.
+     */
+    public function is_local_url() : bool {
+        global $CFG;
+
+        $url = $this->out();
+        // Does URL start with wwwroot? Otherwise, URL isn't relative to wwwroot.
+        return ( ($url === $CFG->wwwroot) || (strpos($url, $CFG->wwwroot.'/') === 0) );
+    }
+
+    /**
+     * Returns URL as relative path from $CFG->wwwroot
      *
      * Can be used for passing around urls with the wwwroot stripped
      *
@@ -884,10 +906,9 @@ class moodle_url {
     public function out_as_local_url($escaped = true, array $overrideparams = null) {
         global $CFG;
 
-        $url = $this->out($escaped, $overrideparams);
-
-        // Url should be equal to wwwroot. If not then throw exception.
-        if (($url === $CFG->wwwroot) || (strpos($url, $CFG->wwwroot.'/') === 0)) {
+        // URL should be relative to wwwroot. If not then throw exception.
+        if ($this->is_local_url()) {
+            $url = $this->out($escaped, $overrideparams);
             $localurl = substr($url, strlen($CFG->wwwroot));
             return !empty($localurl) ? $localurl : '';
         } else {
@@ -1115,7 +1136,7 @@ function validate_email($address) {
 
     require_once("{$CFG->libdir}/phpmailer/moodle_phpmailer.php");
 
-    return moodle_phpmailer::validateAddress($address) && !preg_match('/[<>]/', $address);
+    return moodle_phpmailer::validateAddress($address ?? '') && !preg_match('/[<>]/', $address);
 }
 
 /**
@@ -1325,9 +1346,8 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
 
         case FORMAT_MARKDOWN:
             $text = markdown_to_html($text);
-            if (!$options['noclean']) {
-                $text = clean_text($text, FORMAT_HTML, $options);
-            }
+            // The markdown parser does not strip dangerous html so we need to clean it, even if noclean is set to true.
+            $text = clean_text($text, FORMAT_HTML, $options);
             $text = $filtermanager->filter_text($text, $context, $filteroptions);
             break;
 
@@ -1529,7 +1549,7 @@ function format_string($string, $striplinks = true, $options = null) {
  * @return string
  */
 function replace_ampersands_not_followed_by_entity($string) {
-    return preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $string);
+    return preg_replace("/\&(?![a-zA-Z0-9#]{1,8};)/", "&amp;", $string ?? '');
 }
 
 /**

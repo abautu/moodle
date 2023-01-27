@@ -11943,7 +11943,8 @@ input[disabled] {
   cursor: not-allowed; }
 
 .custom-select {
-  width: auto; }
+  width: auto;
+  max-width: 100%; }
 
 .fade.in {
   opacity: 1; }
@@ -12320,6 +12321,22 @@ body.dragging .dragging {
 .initialbargroups .pagination-sm:last-child .page-item:last-child .page-link {
   border-top-right-radius: 0.2rem;
   border-bottom-right-radius: 0.2rem; }
+
+blockquote {
+  margin: 0 0.5rem 1rem;
+  padding-left: 1rem;
+  color: #495057;
+  border-left: 5px solid #ced4da; }
+
+/** Prevent long strings exceeding page width */
+.page-header-headings:not(.text-truncate),
+.coursename:not(.text-truncate),
+.categoryname:not(.text-truncate),
+.breadcrumb-item:not(.text-truncate),
+.dropdown-item:not(.text-truncate) {
+  word-break: normal;
+  overflow-wrap: anywhere;
+  white-space: normal; }
 
 .icon {
   font-size: 16px;
@@ -13103,12 +13120,6 @@ body.dragging .dragging {
 .block .block-cards .progress-text {
   color: #6a737b; }
 
-.block .block-cards .dashboard-card-footer.menu {
-  opacity: 0; }
-
-.block .block-cards .dashboard-card:hover .dashboard-card-footer.menu, .block .block-cards .dashboard-card:focus .dashboard-card-footer.menu {
-  opacity: 1; }
-
 .block .block-cards .multiline {
   white-space: normal; }
 
@@ -13138,12 +13149,6 @@ body.dragging .dragging {
   @media (max-width: 1199.98px) {
     .dashboard-list-img {
       width: 100%; } }
-
-.course-listitem .menu {
-  opacity: 0; }
-
-.course-listitem:hover .menu, .course-listitem:focus .menu {
-  opacity: 1; }
 
 .dashboard-card-deck .dashboard-card {
   margin-bottom: 0.5rem;
@@ -13727,7 +13732,8 @@ table.calendartable caption {
     margin: 0; }
 
 .cal_courses_flt {
-  color: #6a737b; }
+  color: #6a737b;
+  max-width: 75%; }
 
 .content-bank-container .cb-content-wrapper {
   padding: 0.5rem;
@@ -14966,6 +14972,42 @@ span.editinstructions {
     font-size: 0.7rem; }
   .automatic-completion-conditions .badge:first-child {
     margin-top: 0; }
+
+.activity:focus-within + .activity div.divider button,
+.course-section-header:focus-within + .content .section .activity:first-child div.divider button,
+.content .section .activity:focus-within div.divider button {
+  visibility: visible; }
+
+.activity div.divider {
+  height: 2rem;
+  margin-top: -1.25rem;
+  margin-bottom: -0.75rem;
+  z-index: 5; }
+  .activity div.divider button {
+    border-radius: 100%;
+    width: 2rem;
+    height: 2rem;
+    position: relative;
+    left: calc(50% - 1rem);
+    top: calc(50% - 1rem);
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 0.1s;
+    margin: 0;
+    padding: 0; }
+    .activity div.divider button i.icon {
+      height: 1.5rem;
+      width: 1.5rem;
+      font-size: 1.5rem;
+      position: absolute;
+      left: 0.25rem;
+      top: 0.25rem; }
+
+.activity:not(.dragging) div.divider:hover button,
+.activity:not(.dragging) div.divider:focus button,
+.activity:not(.dragging) div.divider:focus-within button {
+  opacity: 1;
+  visibility: visible; }
 
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
 :target {
@@ -18867,7 +18909,9 @@ img.userpicture {
   margin: 0; }
 
 .path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felement {
-  width: 100%; }
+  width: 100%;
+  overflow: auto;
+  height: calc(100% - 4rem); }
 
 .path-mod-assign [data-region="grade-panel"] .mform .fitem .felement {
   width: auto; }
@@ -21575,9 +21619,7 @@ div.editor_atto_toolbar button .icon {
 .reportbuilder-toggle-card .toggle-card-button.collapsed .expanded-icon-container {
   display: none; }
 
-/**
-* Audiences.
-*/
+/* Audiences. */
 .reportbuilder-audiences-container {
   /* 'OR' separator. */
   /* Card action icons. */ }
@@ -21595,11 +21637,10 @@ div.editor_atto_toolbar button .icon {
     margin-right: 0; }
 
 /* Report table card view styles */
-/* Report table card view for small screens */
 @media (max-width: 575.98px) {
-  .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table thead {
+  .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table thead {
     display: none; }
-  .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr {
+  .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table tr {
     display: flex;
     flex-direction: column;
     margin: .5rem 0;
@@ -21610,39 +21651,89 @@ div.editor_atto_toolbar button .icon {
     background-clip: border-box;
     border: 1px solid rgba(0, 0, 0, 0.125);
     border-radius: 0.5rem; }
-    .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr:hover {
+    .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table tr:hover {
       background-color: #fff !important;
       /* stylelint-disable-line declaration-no-important */ }
-    .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr.emptyrow {
+    .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table tr.emptyrow {
       display: none; }
-    .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr:not(.show) td[data-cardviewhidden] {
+    .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table tr:not(.show) td[data-cardviewhidden] {
       display: none; }
-    .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td {
+    .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table tr td {
       display: block;
       min-height: 3.6rem;
       padding: .5rem .25rem;
       border: none; }
-      .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td::before {
+      .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table tr td::before {
         content: attr(data-cardtitle);
         display: block;
         text-transform: uppercase;
         font-size: 70%;
         color: #343a40; }
-      .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td:not([data-cardtitle]) {
+      .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table tr td:not([data-cardtitle]) {
         min-height: 3rem; }
-      .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td:not(:first-child):not(.card-toggle) {
+      .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table tr td:not(:first-child):not(.card-toggle) {
         border-top: 1px solid rgba(0, 0, 0, 0.125); }
-      .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td:first-child {
+      .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table tr td:first-child {
         padding-right: 2rem; }
-    .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td.card-toggle {
+    .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table tr td.card-toggle {
       display: block !important;
       /* stylelint-disable-line declaration-no-important */
       position: absolute;
       right: 10px; }
-      .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td.card-toggle button {
+      .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table tr td.card-toggle button {
         padding: 0 .5rem;
         color: #6a737b; }
-        .reportbuilder-report[data-report-type="0"]:not([data-editing]) table.reportbuilder-table tr td.card-toggle button i {
+        .reportbuilder-report[data-report-type="0"]:not([data-editing]):not([data-force-table]) table.reportbuilder-table tr td.card-toggle button i {
+          font-size: 1.5em;
+          font-weight: bold; } }
+
+@media (min-width: 576px) {
+  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table thead {
+    display: none; }
+  .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr {
+    display: flex;
+    flex-direction: column;
+    margin: .5rem 0;
+    padding: .25rem .5rem 0 .5rem;
+    background-color: #fff !important;
+    /* stylelint-disable-line declaration-no-important */
+    word-wrap: break-word;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.5rem; }
+    .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr:hover {
+      background-color: #fff !important;
+      /* stylelint-disable-line declaration-no-important */ }
+    .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr.emptyrow {
+      display: none; }
+    .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr:not(.show) td[data-cardviewhidden] {
+      display: none; }
+    .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td {
+      display: block;
+      min-height: 3.6rem;
+      padding: .5rem .25rem;
+      border: none; }
+      .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td::before {
+        content: attr(data-cardtitle);
+        display: block;
+        text-transform: uppercase;
+        font-size: 70%;
+        color: #343a40; }
+      .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td:not([data-cardtitle]) {
+        min-height: 3rem; }
+      .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td:not(:first-child):not(.card-toggle) {
+        border-top: 1px solid rgba(0, 0, 0, 0.125); }
+      .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td:first-child {
+        padding-right: 2rem; }
+    .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td.card-toggle {
+      display: block !important;
+      /* stylelint-disable-line declaration-no-important */
+      position: absolute;
+      right: 10px; }
+      .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td.card-toggle button {
+        padding: 0 .5rem;
+        color: #6a737b; }
+        .reportbuilder-report[data-report-type="0"]:not([data-editing])[data-force-card] table.reportbuilder-table tr td.card-toggle button i {
           font-size: 1.5em;
           font-weight: bold; } }
 

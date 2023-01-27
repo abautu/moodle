@@ -176,6 +176,33 @@ export default class {
     }
 
     /**
+     * Duplicate course modules
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of course modules ids
+     * @param {number|undefined} targetSectionId the optional target sectionId
+     * @param {number|undefined} targetCmId the target course module id
+     */
+    async cmDuplicate(stateManager, cmIds, targetSectionId, targetCmId) {
+        const course = stateManager.get('course');
+        // Lock all target sections.
+        const sectionIds = new Set();
+        if (targetSectionId) {
+            sectionIds.add(targetSectionId);
+        } else {
+            cmIds.forEach((cmId) => {
+                const cm = stateManager.get('cm', cmId);
+                sectionIds.add(cm.sectionid);
+            });
+        }
+        this.sectionLock(stateManager, Array.from(sectionIds), true);
+
+        const updates = await this._callEditWebservice('cm_duplicate', course.id, cmIds, targetSectionId, targetCmId);
+        stateManager.processUpdates(updates);
+
+        this.sectionLock(stateManager, Array.from(sectionIds), false);
+    }
+
+    /**
      * Move course modules to specific course location.
      *
      * Note that one of targetSectionId or targetCmId should be provided in order to identify the
@@ -243,6 +270,19 @@ export default class {
     async sectionDelete(stateManager, sectionIds) {
         const course = stateManager.get('course');
         const updates = await this._callEditWebservice('section_delete', course.id, sectionIds);
+        stateManager.processUpdates(updates);
+    }
+
+    /**
+     * Delete cms.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of section ids
+     */
+    async cmDelete(stateManager, cmIds) {
+        const course = stateManager.get('course');
+        this.cmLock(stateManager, cmIds, true);
+        const updates = await this._callEditWebservice('cm_delete', course.id, cmIds);
+        this.cmLock(stateManager, cmIds, false);
         stateManager.processUpdates(updates);
     }
 

@@ -184,7 +184,7 @@ $string['encoding'] = 'Encoding';
 $string['encoding_help'] = 'Select the character encoding used for the data. (The standard encoding is UTF-8.) If the wrong encoding is selected by mistake, it will be noticeable when previewing the data for import.';
 $string['errorcalculationnoequal'] = 'Formula must start with equal sign (=1+2)';
 $string['errorcalculationunknown'] = 'Invalid formula';
-$string['errorcalculationbroken'] = 'Probably circular reference or broken calculation formula';
+$string['errorcalculationbroken'] = 'Error in the calculation of grade item {$a}.';
 $string['errorgradevaluenonnumeric'] = 'Received non-numeric for low or high grade for';
 $string['errornocalculationallowed'] = 'Calculations are not allowed for this item';
 $string['errornocategorisedid'] = 'Could not get an uncategorised id!';
@@ -239,6 +239,10 @@ $string['feedbacks'] = 'Feedbacks';
 $string['feedbacksaved'] = 'Feedback saved';
 $string['feedbackview'] = 'View feedback';
 $string['finalgrade'] = 'Final grade';
+$string['filterbothactive'] = 'First ({$a->first}) Last ({$a->last})';
+$string['filterbyname'] = 'Filter by name';
+$string['filterfirstactive'] = 'First ({$a->first})';
+$string['filterlastactive'] = 'Last ({$a->last})';
 $string['finalgrade_help'] = 'If the overridden checkbox is ticked, a grade may be added or amended.';
 $string['fixedstudents'] = 'Static students column';
 $string['fixedstudents_help'] = 'Allows grades to scroll horizontally without losing sight of the students column, by making it static.';
@@ -900,6 +904,8 @@ $string['writinggradebookinfo'] = 'Writing gradebook settings';
 $string['xml'] = 'XML';
 $string['yes'] = 'Yes';
 $string['yourgrade'] = 'Your grade';
+
+$string['aria-toggledropdown'] = 'Toggle the following dropdown';
 
 // Deprecated since Moodle 4.0.
 $string['navmethod'] = 'Navigation method';
