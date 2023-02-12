@@ -1333,6 +1333,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         display: inline-block;
     }
 
+    // Legacy dndupload classes. Can be removed in 4.4 as part of MDL-77124.
     &.dndupload-dropzone {
         border: 2px dashed $primary;
         padding-left: 2px;
@@ -1500,7 +1501,8 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         cursor: pointer;
     }
 
-    &:hover {
+    &:hover,
+    &.selected {
         @include alert-variant($activity-item-hover, $activity-item-border, $activity-item-color);
 
         .description .course-description-item,
@@ -1572,5 +1574,26 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
             opacity: 1;
             visibility: visible;
         }
+    }
+}
+
+.bulkenabled .bulk-hidden {
+    display: none !important; // stylelint-disable-line declaration-no-important
+}
+
+.activity-item .bulkselect {
+    position: absolute;
+    left: -2rem;
+}
+
+.course-section-header .bulkselect {
+    left: -2rem;
+    position: relative;
+    width: 0;
+}
+
+@include media-breakpoint-down(sm) {
+    .bulkenabled .course-content {
+        margin-left: 2rem;
     }
 }
